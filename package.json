@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "run": "start cmd /k \"node server.js\" && cd discussion-board && npm run start"
   },
   "keywords": [
     "discussion",
