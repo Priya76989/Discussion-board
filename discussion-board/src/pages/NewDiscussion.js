@@ -50,7 +50,7 @@ const Discussions = () => {
                     const totalCount = likeCount - dislikeCount;
                     return (
                         <li key={discussion.id} className="list-group-item mb-3">
-                            <div>
+4                           <div>
                                 <h5 className="fw-bold text-dark">{discussion.title}</h5>
                                 <p className="text-danger">{discussion.content}</p>
                             </div>
