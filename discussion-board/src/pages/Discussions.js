@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from '../Components/Navbar';
 
 const Discussions = () => {
     // States to handle user interaction
@@ -33,6 +34,8 @@ const Discussions = () => {
     };
 
     return (
+        <>
+        <Navbar/>
         <div className="container mt-5 p-4 bg-light shadow rounded">
             <h1 className="text-center text-primary mb-4">Discussions</h1>
             <div className="d-flex justify-content-end mb-3">
@@ -81,6 +84,8 @@ const Discussions = () => {
                 })}
             </ul>
         </div>
+        </>
+
     );
 };
 

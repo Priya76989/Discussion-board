@@ -1,69 +1,92 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Navbar from '../Components/Navbar';
 
-const NewDiscussion = () => {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const navigate = useNavigate();
+const Discussions = () => {
+    // States to handle user interaction
+    const [discussions, setDiscussions] = useState([]);
+    const [likes, setLikes] = useState({});
+    const [dislikes, setDislikes] = useState({});
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    // To check if there are any discussions stored in localStorage
+    useEffect(() => {
         const storedDiscussions = JSON.parse(localStorage.getItem('discussions')) || [];
+        setDiscussions(storedDiscussions);
 
-        const newDiscussion = {
-            id: Date.now(),
-            title,
-            content,
-        };
+        const storedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+        const storedDislikes = JSON.parse(localStorage.getItem('dislikes')) || {};
+        setLikes(storedLikes);
+        setDislikes(storedDislikes);
+    }, []);
 
-        const updatedDiscussions = [...storedDiscussions, newDiscussion];
-        localStorage.setItem('discussions', JSON.stringify(updatedDiscussions));
+    // Handle like event
+    const handleLike = (id) => {
+        const updatedLikes = { ...likes, [id]: (likes[id] || 0) + 1 };
+        setLikes(updatedLikes);
+        localStorage.setItem('likes', JSON.stringify(updatedLikes));
+    };
 
-        navigate('/discussions');
+    // Handle dislike event
+    const handleDislike = (id) => {
+        const updatedDislikes = { ...dislikes, [id]: (dislikes[id] || 0) + 1 };
+        setDislikes(updatedDislikes);
+        localStorage.setItem('dislikes', JSON.stringify(updatedDislikes));
     };
 
     return (
-        <div className="container mt-16 p-14 bg-red shadow rounded">
-            <h1 className="text-center text-primary mb-4">Post a New Discussion</h1>
-            <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-                <div className="mb-3">
-                    <label htmlFor="title" className="form-label fw-bold text-secondary">
-                        Title:
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                        className="form-control"
-                        placeholder="Enter discussion title"
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="content" className="form-label fw-bold text-secondary">
-                        Content:
-                    </label>
-                    <textarea
-                        id="content"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        required
-                        className="form-control"
-                        placeholder="Enter discussion content"
-                        rows="5"
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="btn btn-success w-100 text-uppercase fw-bold bg-black "
-                >
-                    Post Discussion
-                </button>
-            </form>
+        <>
+        <Navbar/>
+        <div className="container mt-5 p-4 bg-light shadow rounded">
+            <h1 className="text-center text-primary mb-4">Discussions</h1>
+            <div className="d-flex justify-content-end mb-3">
+                <Link to="/new-discussion" className="btn btn-primary">
+                    Post a New Discussion
+                </Link>
+            </div>
+            <ul className="list-group">
+                {discussions.map((discussion) => {
+                    const likeCount = likes[discussion.id] || 0;
+                    const dislikeCount = dislikes[discussion.id] || 0;
+                    const totalCount = likeCount - dislikeCount;
+                    return (
+                        <li key={discussion.id} className="list-group-item mb-3">
+                            <div>
+                                <h5 className="fw-bold text-dark">{discussion.title}</h5>
+                                <p className="text-danger">{discussion.content}</p>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <button
+                                    className="btn btn-success me-2"
+                                    onClick={() => handleLike(discussion.id)}
+                                >
+                                    <img
+                                        src="https://img.icons8.com/?size=100&id=YbNGe7fKEaZV&format=png&color=000000"
+                                        alt="Like"
+                                        className="img-fluid"
+                                        style={{ width: '20px', height: '20px' }}
+                                    />
+                                </button>
+                                <span className="badge bg-secondary me-2">{totalCount}</span>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => handleDislike(discussion.id)}
+                                >
+                                    <img
+                                        src="https://img.icons8.com/?size=100&id=HdNFOrnNuBoG&format=png&color=000000"
+                                        alt="Dislike"
+                                        className="img-fluid"
+                                        style={{ width: '20px', height: '20px' }}
+                                    />
+                                </button>
+                            </div>
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
+        </>
+
     );
 };
 
-export default NewDiscussion;
+export default Discussions;
